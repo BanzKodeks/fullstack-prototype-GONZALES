@@ -1,4 +1,34 @@
-#warning {
-    vertical-align: top;
-    color: rgb(255, 255, 0);
+/* FOR DISPLAYING THE PAGES */
+.page { 
+    display: none; 
+}
+.page.active {
+    display: block; 
+}
+
+body.not-authenticated .role-logged-in { 
+    display: none; 
+}
+
+body.authenticated .role-logged-out { 
+    display: none;
+}
+
+.role-admin { 
+    display: block; 
+}
+
+body.is-admin .role-admin { 
+    display: block; 
+}
+
+/* VERIFY EMAIL */
+
+#verifyEmail {
+    display: block;
+}
+
+/* EMPLOYEES */
+.btn_emp {
+    height: 3rem;
 }
