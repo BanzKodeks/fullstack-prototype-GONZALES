@@ -4,6 +4,7 @@ window.db = {
     accounts: []
 };
 
+//ROUTING
 function navigateTo(hash) {
     window.location.hash = hash;
 }
@@ -47,10 +48,20 @@ function handleRouting() {
     }
 }
 
- window.addEventListener('hashchange', handleRouting);
+window.addEventListener('hashchange', handleRouting);
 
-    if (!window.location.hash) {
-        navigateTo("#/");
-    } else {
-        handleRouting();
-    }
+if (!window.location.hash) {
+    navigateTo("#/");
+} else {
+    handleRouting();
+}
+
+document.getElementById("btnRegister").addEventListener("click", function () {
+
+    let fName = document.getElementById("FirstName").value;
+    let lName = document.getElementById("LastName").value;
+    let email = document.getElementById("Email").value;
+    let password = document.getElementById("Password").value;
+
+    console.log("Registering: ", fName, lName, email);
+});
