@@ -17,10 +17,10 @@
                     <div class="justify-content-end " id="navbarNav">
                         <ul class="navbar-nav d-flex flex-column mb-3">
                             <li class="nav-item">
-                            <a class="nav-link role-logged-out" href="#" id="showLogin" >Login</a>
+                            <a class="nav-link role-logged-out" href="#/login" id="showLogin" >Login</a>
                             </li>
                             <li class="nav-item role-logged-out">
-                            <a class="nav-link" href="#" id="showRegister">Register</a>
+                            <a class="nav-link" href="#/register" id="showRegister">Register</a>
                             </li>
                             
                             <!-- ADMIN DROPDOWN WHEN LOGGED IN -->
@@ -62,7 +62,7 @@
 <main>
 
     <!-- HOME -->
-    <section id="homePage" class="page ">
+    <section id="homePage" class="page active">
         <div class="container-fluid p-3">
             <h1>Welcome to Full-Stack App</h1>
 
@@ -118,7 +118,7 @@
     <section id="verify-email" class="page">
         <div class="container p-3">
             <h1>Verify Your Email</h1>
-            <div class="alert alert-success" role="alert" id="verifyEmail active">
+            <div class="alert alert-success" role="alert" id="verifyEmail">
                 ✅ A verification link has been sent to <span>USER_EMAIL</span>
             </div>
             <p>For demo purposes, click below to simulate verification:</p>
@@ -137,7 +137,7 @@
            
                     <div class="input mb-3">
                         <label for="LastName" class="form-label">Email</label>
-                        <input type="name" class="form-control" id="LoginEmail" required>
+                        <input type="email" class="form-control" id="LoginEmail" required>
                     </div>
                     <div class="input mb-3">
                         <label for="Password" class="form-label">Password</label>
@@ -167,10 +167,10 @@
     </section>
 
     <!-- EMPLOYEES (ADMIN) -->
-    <section id="profilePage" class="page active">
+    <section id="employeePage" class="page">
         <div class="container-fluid p-3">
             <div class="d-flex justify-content-between">
-                <h1>EMPLOYEES</h1>
+                <h1>Employees</h1>
                 <button type="button" class="btn btn-success btn_emp">+ Add Employees</button>
             </div>
                 <div class="card p-3 mt-3">
@@ -207,7 +207,7 @@
                         </div>
                         <div class="input mb-3">
                             <label for="EmpEmail" class="form-label">User Email</label>
-                            <input type="name" class="form-control" id="Inp_EmpEmail" required>
+                            <input type="email" class="form-control" id="Inp_EmpEmail" required>
                         </div>
                         <div class="input mb-3">
                             <label for="EmpPos" class="form-label">Position</label>
@@ -231,6 +231,176 @@
         </div>
     </section>
 
+    <!-- DEPARTMENT (ADMIN) -->
+    <section id="departmentPage" class="page">
+        <div class="container-fluid p-3">
+            <div class="d-flex justify-content-between">
+                <h1>Departments</h1>
+                <button type="button" class="btn btn-success btn_dept">+ Add Department</button>
+            </div>
+                <div class="card p-3 mt-3">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Description</th> 
+                                <th scope="col">Actions</th>   
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                   <p>Engineering</p>
+                                </td>
+                                <td>
+                                   <p>Software</p>
+                                </td>
+                                <td>
+                                   <button class="btn btn-outline-primary">Edit</button>
+                                   <button class="btn btn-outline-danger">Delete</button>
+                                </td>
+                            </tr>   
+                             <tr>
+                                <td>
+                                   <p>HR</p>
+                                </td>
+                                <td>
+                                   <p>Human Resource</p>
+                                </td>
+                                <td>
+                                   <button class="btn btn-outline-primary">Edit</button>
+                                   <button class="btn btn-outline-danger">Delete</button>
+                                </td>
+                            </tr>                 
+                        </tbody>
+                    </table>
+                </div> 
+        </div>
+    </section>
+
+    <!-- ACCOUNTS (ADMIN) -->
+    <section id="accountsPage" class="page">
+        <div class="container-fluid p-3">
+            <div class="d-flex justify-content-between">
+                <h1>Accounts</h1>
+                <button type="button" class="btn btn-success btn_acc">+ Add Account</button>
+            </div>
+                <div class="card p-3 mt-3">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Role</th> 
+                                <th scope="col">Verified</th>
+                                <th scope="col">Actions</th>   
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                   <p>Admin User</p>
+                                </td>
+                                <td>
+                                   <p>admin@example.com</p>
+                                </td>
+                                 <td>
+                                   <p>Admin</p>
+                                </td>
+                                 <td>
+                                   <p>✅</p>
+                                </td>
+                                <td>
+                                   <button class="btn btn-outline-primary">Edit</button>
+                                   <button class="btn btn-outline-warning">Reset Password</button>
+                                   <button class="btn btn-outline-danger">Delete</button>
+                                </td>
+                            </tr>             
+                        </tbody>
+                    </table>
+                </div> 
+
+                <div class="card mt-5">
+                    <header class="navbar navbar-expand-lg bg-light p-3">
+                        <h5>Add/Edit Account</h5>
+                    </header>
+
+                    <div class="p-3">
+                        <form>
+                            <div class="input mb-3">
+                            <label for="AccFirstN" class="form-label">First Name</label>
+                            <input type="name" class="form-control" id="Inp_AccFirstN" required>
+                        </div>
+                        <div class="input mb-3">
+                            <label for="AccLastN" class="form-label">Last Name</label>
+                            <input type="name" class="form-control" id="Inp_AccLastN" required>
+                        </div>
+                        <div class="input mb-3">
+                            <label for="AccEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="Inp_AccEmail" required>
+                        </div>
+                        <div class="input mb-3">
+                            <label for="AccPass" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="Inp_AccPass" required>
+                        </div>
+                        <div class="input mb-3">
+                            <label for="AccRole" class="form-label">Role</label>
+                            <input type="name" class="form-control" id="Inp_AccPass" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Verified</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="Inp_AccVerify">
+                            </div>
+                        </div>
+                        <div class="btn-login">
+                            <button type="button" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-secondary">Cancel</button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+        </div>
+    </section>
+
+    <!-- REQUEST -->
+    <section id="requestPage" class="page">
+        <div class="container-fluid p-3">
+            <div class="d-flex justify-content-between">
+                <h1>My Request</h1>
+                <button type="button" class="btn btn-success btn_req" data-bs-toggle="modal" data-bs-target="#exampleModal">+ New Request</button>
+            </div>
+            <p>You have no request yet.</p>
+            <button type="button" class="btn btn-success btn_reqCreate" data-bs-toggle="modal" data-bs-target="#exampleModal">Create One</button>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="input mb-3">
+                            <label for="ReqType" class="form-label mb-0"><strong>Type</strong></label>
+                            <input type="name" class="form-control" id="Inp_ReqType" required>
+                        </div>
+                        <label for="Req" class="form-label mb-0"><strong>Items</strong></label>
+                        <div class="input mb-3 d-flex">
+                            <input type="name" class="form-control" id="Inp_ReqItem" required>
+                            <input type="number" class="form-control" id="Inp_ReqQuan" required>
+                            <button class="btn btn-outline-secondary">+</button>
+                        </div>
+                        <div class="btn-login">
+                            <button type="button" class="btn btn-primary">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 
 </main>
 

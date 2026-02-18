@@ -15,7 +15,7 @@ body.authenticated .role-logged-out {
 }
 
 .role-admin { 
-    display: block; 
+    display: none; 
 }
 
 body.is-admin .role-admin { 
@@ -31,4 +31,9 @@ body.is-admin .role-admin {
 /* EMPLOYEES */
 .btn_emp {
     height: 3rem;
+}
+
+/* REQUEST */
+#Inp_ReqQuan {
+    width: 70px;
 }
