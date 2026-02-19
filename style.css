@@ -25,7 +25,7 @@ body.is-admin .role-admin {
 /* VERIFY EMAIL */
 
 #verifyEmail {
-    display: block;
+    display: none;
 }
 
 /* EMPLOYEES */

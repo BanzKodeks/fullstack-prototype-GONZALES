@@ -30,16 +30,16 @@
                                 </a>  
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
-                                        <a class="dropdown-item" href="#">Profile</a>
+                                        <a class="dropdown-item" href="#/profile">Profile</a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="#">My Requests</a>
                                     </li>
                                     <li class="role-admin">
-                                        <a class="dropdown-item" href="#">Accounts</a>
+                                        <a class="dropdown-item" href="#/accounts">Accounts</a>
                                     </li>
                                     <li class="role-admin">
-                                        <a class="dropdown-item" href="#">Departments</a>
+                                        <a class="dropdown-item" href="#/departments">Departments</a>
                                     </li>
                                     <li class="role-admin">
                                         <a class="dropdown-item" href="#">My Requests</a>
@@ -48,7 +48,7 @@
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li class="role-admin">
-                                        <a class="dropdown-item text-danger" href="#">Logout</a>
+                                        <a class="dropdown-item text-danger" href="#" id="btnLogout">Logout</a>
                                     </li>
                                 </ul>
                                 </li>
@@ -118,11 +118,11 @@
         <div class="container p-3">
             <h1>Verify Your Email</h1>
             <div class="alert alert-success" role="alert" id="verifyEmail">
-                ✅ A verification link has been sent to <span>USER_EMAIL</span>
+                ✅ A verification link has been sent to <span id="verifyUserEmail"></span>
             </div>
             <p>For demo purposes, click below to simulate verification:</p>
             <div class="btn-verify ">
-                <button type="button" class="btn btn-success">✅ Simulate Email Verification</button>
+                <button type="button" class="btn btn-success" id="btnVerifyEmail">✅ Simulate Email Verification</button>
                 <button type="button" href="#" class="btn btn-outline-secondary" id="goToLogin">Go to login</button>
             </div>
         </div>
@@ -143,7 +143,7 @@
                         <input type="password" class="form-control" id="LoginPassword" required>
                     </div>
                     <div class="btn-login">
-                        <button type="button" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-primary" id="btnLogin">Submit</button>
                         <button type="button" class="btn btn-outline-secondary">Cancel</button>
                     </div>
                 </form>
@@ -183,12 +183,8 @@
                                 <th scope="col">Actions</th>   
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="5" class="text-center text-muted">
-                                    <strong>No employees.</strong>
-                                </td>
-                            </tr>             
+                        <tbody id="employeesTableBody">
+
                         </tbody>
                     </table>
                 </div> 
@@ -221,7 +217,7 @@
                             <input type="date" class="form-control" id="Inp_HireDate" required>
                         </div>
                         <div class="btn-login">
-                            <button type="button" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-primary btn-save-employee">Save</button>
                             <button type="button" class="btn btn-secondary">Cancel</button>
                         </div>
                         </form>
@@ -246,31 +242,7 @@
                                 <th scope="col">Actions</th>   
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                   <p>Engineering</p>
-                                </td>
-                                <td>
-                                   <p>Software</p>
-                                </td>
-                                <td>
-                                   <button class="btn btn-outline-primary">Edit</button>
-                                   <button class="btn btn-outline-danger">Delete</button>
-                                </td>
-                            </tr>   
-                             <tr>
-                                <td>
-                                   <p>HR</p>
-                                </td>
-                                <td>
-                                   <p>Human Resource</p>
-                                </td>
-                                <td>
-                                   <button class="btn btn-outline-primary">Edit</button>
-                                   <button class="btn btn-outline-danger">Delete</button>
-                                </td>
-                            </tr>                 
+                        <tbody id="departmentsTableBody">                              
                         </tbody>
                     </table>
                 </div> 
@@ -295,26 +267,7 @@
                                 <th scope="col">Actions</th>   
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                   <p>Admin User</p>
-                                </td>
-                                <td>
-                                   <p>admin@example.com</p>
-                                </td>
-                                 <td>
-                                   <p>Admin</p>
-                                </td>
-                                 <td>
-                                   <p>✅</p>
-                                </td>
-                                <td>
-                                   <button class="btn btn-outline-primary">Edit</button>
-                                   <button class="btn btn-outline-warning">Reset Password</button>
-                                   <button class="btn btn-outline-danger">Delete</button>
-                                </td>
-                            </tr>             
+                        <tbody id="accountsTableBody">                     
                         </tbody>
                     </table>
                 </div> 
@@ -342,10 +295,10 @@
                             <label for="AccPass" class="form-label">Password</label>
                             <input type="password" class="form-control" id="Inp_AccPass" required>
                         </div>
-                        <div class="input mb-3">
-                            <label for="AccRole" class="form-label">Role</label>
-                            <input type="name" class="form-control" id="Inp_AccPass" required>
-                        </div>
+                        <select id="Inp_AccRole" class="form-control">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
                         <div class="mb-3">
                             <label class="form-label">Verified</label>
                             <div class="form-check">
