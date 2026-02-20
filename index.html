@@ -44,28 +44,29 @@
                                     <li>
                                         <a class="dropdown-item" href="#/profile">Profile</a>
                                     </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#/requests">My Requests</a>
+                                    <li class="role-admin">
+                                        <a class="dropdown-item" href="#/employees">Employees</a>
                                     </li>
                                     <li class="role-admin">
                                         <a class="dropdown-item" href="#/accounts">Accounts</a>
                                     </li>
                                     <li class="role-admin">
                                         <a class="dropdown-item" href="#/departments">Departments</a>
-                                    </li>
+                                    </li>                       
+                                                                        <li>
+                                        <a class="dropdown-item" href="#/requests">My Requests</a>
+                                    </li>        
                                     <li class="role-admin">
                                         <hr class="dropdown-divider">
                                     </li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
-                                        <a class="dropdown-item text-danger" href="#" id="btnLogout">
+                                        <a class="dropdown-item text-danger" id="btnLogout">
                                             Logout
                                         </a>
                                     </li>
                                 </ul>
                                 </li>
-
-                                
                          </ul>
                                        
                     </div>
@@ -122,7 +123,7 @@
                     </div>
                     <div class="btn-register">
                         <button type="button" class="btn btn-success" id="btnRegister">Submit</button>
-                        <button type="button" class="btn btn-outline-secondary">Cancel</button>
+                        <button type="button" class="btn btn-outline-secondary btnCancel">Cancel</button>
                     </div>
                 </form>
         </div>
@@ -159,7 +160,7 @@
                     </div>
                     <div class="btn-login">
                         <button type="button" class="btn btn-primary" id="btnLogin">Submit</button>
-                        <button type="button" class="btn btn-outline-secondary">Cancel</button>
+                        <button type="button" class="btn btn-outline-secondary btnCancel">Cancel</button>
                     </div>
                 </form>
         </div>
@@ -212,29 +213,29 @@
                     <div class="p-3">
                         <form>
                             <div class="input mb-3">
-                            <label for="EmpId" class="form-label">Employee ID</label>
-                            <input type="number" class="form-control" id="Inp_EmpId" required>
-                        </div>
-                        <div class="input mb-3">
-                            <label for="EmpEmail" class="form-label">User Email</label>
-                            <input type="email" class="form-control" id="Inp_EmpEmail" required>
-                        </div>
-                        <div class="input mb-3">
-                            <label for="EmpPos" class="form-label">Position</label>
-                            <input type="text" class="form-control" id="Inp_EmpPos" required>
-                        </div>
-                        <div class="input mb-3">
-                            <label for="EmpDept" class="form-label">Department</label>
-                            <input type="text" class="form-control" id="Inp_EmpDept" required>
-                        </div>
-                        <div class="input mb-3">
-                            <label for="HireDate" class="form-label">Hire Date</label>
-                            <input type="date" class="form-control" id="Inp_HireDate" required>
-                        </div>
-                        <div class="btn-login">
-                            <button type="button" class="btn btn-primary btn-save-employee">Save</button>
-                            <button type="button" class="btn btn-secondary">Cancel</button>
-                        </div>
+                                <label for="EmpId" class="form-label">Employee ID</label>
+                                <input type="number" class="form-control" id="Inp_EmpId" required>
+                            </div>
+                            <div class="input mb-3">
+                                <label for="EmpEmail" class="form-label">User Email</label>
+                                <input type="email" class="form-control" id="Inp_EmpEmail" required>
+                            </div>
+                            <div class="input mb-3">
+                                <label for="EmpPos" class="form-label">Position</label>
+                                <input type="text" class="form-control" id="Inp_EmpPos" required>
+                            </div>
+                            <div class="input mb-3">
+                                <label for="EmpDept" class="form-label">Department</label>
+                                <input type="text" class="form-control" id="Inp_EmpDept" required>
+                            </div>
+                            <div class="input mb-3">
+                                <label for="HireDate" class="form-label">Hire Date</label>
+                                <input type="date" class="form-control" id="Inp_HireDate" required>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary btn-save-employee">Save</button>
+                                <button type="button" class="btn btn-secondary btnCancelP">Cancel</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -295,37 +296,35 @@
                     <div class="p-3">
                         <form>
                             <div class="input mb-3">
-                            <label for="AccFirstN" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="Inp_AccFirstN" required>
-                        </div>
-                        <div class="input mb-3">
-                            <label for="AccLastN" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="Inp_AccLastN" required>
-                        </div>
-                        <div class="input mb-3">
-                            <label for="AccEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="Inp_AccEmail" required>
-                        </div>
-                        <div class="input mb-3">
-                            <label for="AccPass" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="Inp_AccPass" required>
-                        </div>
-                        <select id="Inp_AccRole" class="form-control">
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                        <div class="mb-3">
-                            <label class="form-label">Verified</label>
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="Inp_AccVerify">
+                                <label for="AccFirstN" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="Inp_AccFirstN" required>
                             </div>
-                        </div>
-                        <div class="btn-login">
-                            <button type="button" class="btn btn-primary" id="btnSaveAccount">
-                                Save
-                            </button>
-                            <button type="button" class="btn btn-secondary">Cancel</button>
-                        </div>
+                            <div class="input mb-3">
+                                <label for="AccLastN" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="Inp_AccLastN" required>
+                            </div>
+                            <div class="input mb-3">
+                                <label for="AccEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="Inp_AccEmail" required>
+                            </div>
+                            <div class="input mb-3">
+                                <label for="AccPass" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="Inp_AccPass" required>
+                            </div>
+                            <select id="Inp_AccRole" class="form-control">
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                            <div class="mb-3">
+                                <label class="form-label">Verified</label>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="Inp_AccVerify">
+                                </div>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-primary" id="btnSaveAccount">Save</button>
+                                <button type="button" class="btn btn-secondary" id="btnCancelAcc">Cancel</button>
+                            </div>
                         </form>
                     </div>
                 </div>

@@ -15,18 +15,12 @@ function handleRouting() {
     })
 
     const protectedRoutes = ['#/profile', '#/requests', '#/employees', '#/accounts', '#/departments'];
-    const adminRoutes = ['#/accounts', '#/departments', '#/employees'];
     const publicOnlyRoutes = ['#/login', '#/register', '#/verify-email'];
+    const adminRoutes = ['#/accounts', '#/departments', '#/employees'];
 
     if (protectedRoutes.includes(hash) && !currentUser) {
         showToast("Access denied. Login required.", "error");
         navigateTo('#/login');
-        return;
-    }
-
-    
-    if (currentUser && publicOnlyRoutes.includes(hash)) {
-        navigateTo('#/profile');
         return;
     }
 
@@ -35,6 +29,13 @@ function handleRouting() {
         navigateTo("#/");
         return;
     }
+
+        
+    if (currentUser && publicOnlyRoutes.includes(hash)) {
+        navigateTo('#/profile');
+        return;
+    }
+
 
     switch (hash) {
         case '#/':
@@ -79,12 +80,6 @@ function handleRouting() {
 }
 
 window.addEventListener('hashchange', handleRouting);
-
-if (!window.location.hash) {
-    navigateTo("#/");
-} else {
-    handleRouting();
-}
 
 // Registration
 document.getElementById("btnRegister").addEventListener("click", function () {
@@ -150,7 +145,6 @@ document.getElementById("btnVerifyEmail").addEventListener("click", function () 
 });
 
 
-
 //Login
 document.getElementById("btnLogin").addEventListener("click", function () {
 
@@ -164,7 +158,7 @@ document.getElementById("btnLogin").addEventListener("click", function () {
     );
 
     if (!user) {
-        showToast("❌ Invalid login or not verified.");
+        showToast("❌ Invalid login or not verified.", "error");
         return;
     }
 
@@ -223,6 +217,20 @@ document.getElementById("btnLogout").addEventListener("click", function () {
     setAuthState(false);
 
     navigateTo("#/");
+});
+
+//Cancel
+document.querySelector(".btnCancel").addEventListener("click", function () {
+    navigateTo("#/");
+});
+
+document.querySelector(".btnCancelP").addEventListener("click", function () {
+    navigateTo("#/profile");
+});
+
+
+document.getElementById("btnCancelAcc").addEventListener("click", function () {
+    navigateTo("#/profile");
 });
 
 
@@ -366,14 +374,14 @@ function resetPassword(index) {
     let newPassword = prompt("Enter new password (min 6 chars):");
 
     if (!newPassword || newPassword.length < 6) {
-        showToast("❌ Password must be at least 6 characters.");
+        showToast("❌ Password must be at least 6 characters.", "error");
         return;
     }
 
     window.db.accounts[index].password = newPassword;
 
     saveToStorage();
-    alert("✅ Password reset successfully.");
+    showToast("✅ Password reset successfully.");
 }
 
 function deleteAccount(index) {
@@ -381,7 +389,7 @@ function deleteAccount(index) {
     let acc = window.db.accounts[index];
 
     if (currentUser.email === acc.email) {
-        showToast("❌ You cannot delete your own account.");
+        showToast("❌ You cannot delete your own account.", "error");
         return;
     }
 
@@ -394,7 +402,7 @@ function deleteAccount(index) {
     saveToStorage();
     renderAccountsList();
 
-    showToast("✅ Account deleted.");
+    showToast("✅ Account deleted.", "error");
 }
 
 let editingAccountIndex = null;
@@ -412,7 +420,7 @@ function editAccount(index) {
 
     editingAccountIndex = index;
 
-    alert("Editing account: " + acc.email);
+    showToast("Editing account: " + acc.email);
 }
 
 document.querySelector(".btn_acc").addEventListener("click", function () {
@@ -433,12 +441,12 @@ function saveAccount() {
 
 
     if (!firstName || !lastName || !email || !password) {
-        alert("All fields are required.");
+        showToast("All fields are required.", "error");
         return;
     }
 
     if (password.length < 6) {
-        alert("Password must be at least 6 characters.");
+        showToast("Password must be at least 6 characters.", "error");
         return;
     }
 
@@ -448,7 +456,7 @@ function saveAccount() {
 
         let existing = window.db.accounts.find(acc => acc.email === email);
         if (existing) {
-            alert("Email already exists.");
+            showToast("Email already exists.", "error");
             return;
         }
 
@@ -469,15 +477,7 @@ function saveAccount() {
 
         let account = window.db.accounts[editingAccountIndex];
 
-
-        let duplicate = window.db.accounts.find((acc, i) =>
-            acc.email === email && i !== editingAccountIndex
-        );
-
-        if (duplicate) {
-            alert("Email already exists.");
-            return;
-        }
+        let oldEmail = account.email;
 
         account.firstName = firstName;
         account.lastName = lastName;
@@ -486,7 +486,12 @@ function saveAccount() {
         account.role = role;
         account.verified = verified;
 
-        alert("✅ Account updated.");
+        if (currentUser && currentUser.email === oldEmail) {
+            currentUser.email = email;
+            localStorage.setItem("auth_token", email);
+        }
+
+        showToast("✅ Account updated.");
     }
 
     saveToStorage();
@@ -605,11 +610,27 @@ document.querySelector(".btn_dept").addEventListener("click", function () {
     showToast("Department added successfully.");
 });
 
+
+
+
 //Employees
+
+function clearEmployeeForm() {
+    document.getElementById("Inp_EmpId").value = "";
+    document.getElementById("Inp_EmpEmail").value = "";
+    document.getElementById("Inp_EmpPos").value = "";
+    document.getElementById("Inp_EmpDept").value = "";
+    document.getElementById("Inp_HireDate").value = "";
+}
+
+
+document.querySelector(".btn_emp").addEventListener("click", function () {
+    clearAccountForm();
+    showToast("Fill the form below to create account.");
+});
+
 function renderEmployeesTable() {
-
     let tbody = document.getElementById("employeesTableBody");
-
     tbody.innerHTML = "";
 
     if (window.db.employees.length === 0) {
@@ -623,16 +644,19 @@ function renderEmployeesTable() {
         return;
     }
 
-    window.db.employees.forEach(emp => {
+    window.db.employees.forEach((emp, index) => {  // ← fix here
+        let account = window.db.accounts.find(acc => acc.email === emp.email);
+        let fullName = account ? account.firstName + " " + account.lastName : "Unknown";
 
         tbody.innerHTML += `
             <tr>
                 <td>${emp.empId}</td>
-                <td>${emp.email}</td>
+                <td>${fullName}</td>
                 <td>${emp.position}</td>
                 <td>${emp.department}</td>
                 <td>
-                    <button class="btn btn-sm btn-outline-danger">
+                    <button class="btn btn-outline-danger btn-sm"
+                        onclick="deleteEmployee(${index})">
                         Delete
                     </button>
                 </td>
@@ -641,8 +665,17 @@ function renderEmployeesTable() {
     });
 }
 
-document.querySelector(".btn-save-employee")
-.addEventListener("click", function () {
+function deleteEmployee(index) {
+    if (!confirm("Delete this employee?")) return;
+
+    window.db.employees.splice(index, 1);
+
+    saveToStorage();
+    renderEmployeesTable(); 
+    showToast("Employee deleted.");
+}
+
+document.querySelector(".btn-save-employee").addEventListener("click", function () {
 
     let empId = document.getElementById("Inp_EmpId").value.trim();
     let email = document.getElementById("Inp_EmpEmail").value.trim();
@@ -659,6 +692,8 @@ document.querySelector(".btn-save-employee")
         showToast("No account matches this email.", "error");
         return;
     }
+
+    let fullName = userExists.firstName + " " + userExists.lastName;
 
     let duplicateId = window.db.employees.find(emp => emp.empId === empId);
     if (duplicateId) {
@@ -776,7 +811,7 @@ document.getElementById("btnSubmitRequest")
     }
 
     if (items.length === 0) {
-        alert("You must add at least one valid item.");
+        showToast("You must add at least one valid item.", "error");
         return;
     }
 
@@ -807,14 +842,14 @@ function showToast(message, type = "success") {
     toastBody.textContent = message;
 
     if (type === "error") {
-        toastEl.classList.remove("bg-success");
-        toastEl.classList.add("bg-danger", "text-white");
+    toastEl.classList.remove("bg-success");
+    toastEl.classList.add("bg-danger", "text-white");
     } else {
         toastEl.classList.remove("bg-danger");
         toastEl.classList.add("bg-success", "text-white");
     }
 
-    const toast = new bootstrap.Toast(toastEl);
+    let toast = new bootstrap.Toast(toastEl);
     toast.show();
 }
 
