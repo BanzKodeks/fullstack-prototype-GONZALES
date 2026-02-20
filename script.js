@@ -15,11 +15,18 @@ function handleRouting() {
     })
 
     const protectedRoutes = ['#/profile', '#/requests', '#/employees', '#/accounts', '#/departments'];
-
     const adminRoutes = ['#/accounts', '#/departments', '#/employees'];
+    const publicOnlyRoutes = ['#/login', '#/register', '#/verify-email'];
 
     if (protectedRoutes.includes(hash) && !currentUser) {
+        showToast("Access denied. Login required.", "error");
         navigateTo('#/login');
+        return;
+    }
+
+    
+    if (currentUser && publicOnlyRoutes.includes(hash)) {
+        navigateTo('#/profile');
         return;
     }
 
@@ -201,9 +208,13 @@ function autoLogin() {
 
     if (user) {
         setAuthState(true, user);
+
+        if (window.location.hash === "#/login" ||
+            window.location.hash === "#/register") {
+            navigateTo("#/profile");
+        }
     }
 }
-
 
 //Logout
 document.getElementById("btnLogout").addEventListener("click", function () {
@@ -298,7 +309,7 @@ function renderProfile() {
     editBtn = document.querySelector("#profilePage .btn-profile button");
 
     editBtn.addEventListener("click", function () {
-        alert("Edit Profile feature coming soon!");
+        showToast("Edit Profile feature coming soon!");
     });
 }
 
@@ -355,7 +366,7 @@ function resetPassword(index) {
     let newPassword = prompt("Enter new password (min 6 chars):");
 
     if (!newPassword || newPassword.length < 6) {
-        alert("❌ Password must be at least 6 characters.");
+        showToast("❌ Password must be at least 6 characters.");
         return;
     }
 
@@ -370,7 +381,7 @@ function deleteAccount(index) {
     let acc = window.db.accounts[index];
 
     if (currentUser.email === acc.email) {
-        alert("❌ You cannot delete your own account.");
+        showToast("❌ You cannot delete your own account.");
         return;
     }
 
@@ -383,7 +394,7 @@ function deleteAccount(index) {
     saveToStorage();
     renderAccountsList();
 
-    alert("✅ Account deleted.");
+    showToast("✅ Account deleted.");
 }
 
 let editingAccountIndex = null;
@@ -403,6 +414,11 @@ function editAccount(index) {
 
     alert("Editing account: " + acc.email);
 }
+
+document.querySelector(".btn_acc").addEventListener("click", function () {
+    clearAccountForm();
+    showToast("Fill the form below to create account.");
+});
 
 document.getElementById("btnSaveAccount").addEventListener("click", saveAccount);
 
@@ -491,27 +507,103 @@ function clearAccountForm() {
 }
 
 //Department
+let editingDepartmentIndex = null;
 function renderDepartmentsList() {
 
     let tbody = document.getElementById("departmentsTableBody");
-
     tbody.innerHTML = "";
 
-    window.db.departments.forEach(dept => {
+    if (window.db.departments.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" class="text-center text-muted">
+                    No departments yet.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    window.db.departments.forEach((dept, index) => {
 
         tbody.innerHTML += `
             <tr>
                 <td>${dept.name}</td>
                 <td>${dept.description}</td>
                 <td>
-                    <button class="btn btn-outline-secondary btn-sm">
+                    <button class="btn btn-outline-secondary btn-sm"
+                        onclick="editDepartment(${index})">
                         Edit
+                    </button>
+
+                    <button class="btn btn-outline-danger btn-sm"
+                        onclick="deleteDepartment(${index})">
+                        Delete
                     </button>
                 </td>
             </tr>
         `;
     });
 }
+
+function editDepartment(index) {
+
+    let dept = window.db.departments[index];
+
+    let newName = prompt("Edit Department Name:", dept.name);
+    if (!newName) return;
+
+    let newDesc = prompt("Edit Description:", dept.description);
+    if (!newDesc) return;
+
+    window.db.departments[index].name = newName;
+    window.db.departments[index].description = newDesc;
+
+    saveToStorage();
+    renderDepartmentsList();
+    showToast("Department updated.");
+}
+
+function deleteDepartment(index) {
+
+    if (!confirm("Delete this department?")) return;
+
+    window.db.departments.splice(index, 1);
+
+    saveToStorage();
+    renderDepartmentsList();
+    showToast("Department deleted.");
+}
+
+document.querySelector(".btn_dept").addEventListener("click", function () {
+
+    let name = prompt("Enter Department Name:");
+    if (!name) {
+        showToast("Department name is required.", "error");
+        return;
+    }
+
+    let description = prompt("Enter Description:");
+    if (!description) {
+        showToast("Description is required.", "error");
+        return;
+    }
+
+    let existing = window.db.departments.find(d => d.name === name);
+    if (existing) {
+        showToast("Department already exists.", "error");
+        return;
+    }
+
+    window.db.departments.push({
+        name: name,
+        description: description
+    });
+
+    saveToStorage();
+    renderDepartmentsList();
+    showToast("Department added successfully.");
+});
 
 //Employees
 function renderEmployeesTable() {
@@ -549,33 +641,41 @@ function renderEmployeesTable() {
     });
 }
 
-document.querySelector(".btn-save-employee").addEventListener("click", function () {
+document.querySelector(".btn-save-employee")
+.addEventListener("click", function () {
 
-    let empId = document.getElementById("Inp_EmpId").value;
-    let email = document.getElementById("Inp_EmpEmail").value;
-    let position = document.getElementById("Inp_EmpPos").value;
-    let dept = document.getElementById("Inp_EmpDept").value;
+    let empId = document.getElementById("Inp_EmpId").value.trim();
+    let email = document.getElementById("Inp_EmpEmail").value.trim();
+    let position = document.getElementById("Inp_EmpPos").value.trim();
+    let dept = document.getElementById("Inp_EmpDept").value.trim();
 
-    let userExists = window.db.accounts.find(acc => acc.email === email);
-
-    if (!userExists) {
-        alert("❌ No account matches this email.");
+    if (!empId || !email || !position || !dept) {
+        showToast("All fields are required.", "error");
         return;
     }
 
-    let newEmployee = {
+    let userExists = window.db.accounts.find(acc => acc.email === email);
+    if (!userExists) {
+        showToast("No account matches this email.", "error");
+        return;
+    }
+
+    let duplicateId = window.db.employees.find(emp => emp.empId === empId);
+    if (duplicateId) {
+        showToast("Employee ID already exists.", "error");
+        return;
+    }
+
+    window.db.employees.push({
         empId: empId,
         email: email,
         position: position,
         department: dept
-    };
-
-    window.db.employees.push(newEmployee);
+    });
 
     saveToStorage();
     renderEmployeesTable();
-
-    alert("✅ Employee added!");
+    showToast("Employee added successfully.");
 });
 
 //Request

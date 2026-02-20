@@ -22,12 +22,6 @@ body.is-admin .role-admin {
     display: block; 
 }
 
-/* VERIFY EMAIL */
-
-#verifyEmail {
-    display: none;
-}
-
 /* EMPLOYEES */
 .btn_emp {
     height: 3rem;
