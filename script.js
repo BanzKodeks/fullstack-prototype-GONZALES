@@ -14,7 +14,7 @@ function handleRouting() {
         page.classList.remove('active');
     })
 
-    const protectedRoutes = ['#/profile', '#/requests'];
+    const protectedRoutes = ['#/profile', '#/requests', '#/employees', '#/accounts', '#/departments'];
 
     const adminRoutes = ['#/accounts', '#/departments', '#/employees'];
 
@@ -24,6 +24,7 @@ function handleRouting() {
     }
 
     if (adminRoutes.includes(hash) && (!currentUser || currentUser.role !== 'admin')) {
+        showToast("Access denied. Admin only.", "error");
         navigateTo("#/");
         return;
     }
@@ -54,11 +55,15 @@ function handleRouting() {
             renderAccountsList();
         break;
         case "#/departments":
-            document.getElementById("departmentPage").classList.add("active");
+            document.getElementById("departmentsPage").classList.add("active");
             renderDepartmentsList();
         break;
+        case "#/requests":
+            document.getElementById("requestPage").classList.add("active");
+            renderMyRequests();
+        break;
         case "#/employees":
-            document.getElementById("employeePage").classList.add("active");
+            document.getElementById("employeesPage").classList.add("active");
             renderEmployeesTable();
         break;
         default:
@@ -80,14 +85,19 @@ document.getElementById("btnRegister").addEventListener("click", function () {
     let email = document.getElementById("Email").value;
     let password = document.getElementById("Password").value;
 
+    let passwordInput = document.getElementById("Password");
+
     if (password.length < 6) {
-        alert("Password must be at least 6 characters");
+        passwordInput.classList.add("is-invalid");
+        showToast("Password must be at least 6 characters.", "error");
         return;
+    } else {
+        passwordInput.classList.remove("is-invalid");
     }
 
     let existing = window.db.accounts.find(acc => acc.email === email);
     if (existing) {
-        alert("Email already exists.");
+        showToast("Email already exists.", "error");
         return;
     }
 
@@ -101,6 +111,7 @@ document.getElementById("btnRegister").addEventListener("click", function () {
     };
 
     window.db.accounts.push(newAccount);
+    showToast("Account created successfully.");
 
     saveToStorage();
 
@@ -117,7 +128,7 @@ document.getElementById("btnVerifyEmail").addEventListener("click", function () 
     let account = window.db.accounts.find(acc => acc.email === emailToVerify);
 
     if (!account) {
-        alert("Account not found.");
+        showToast("Account not found.");
         return;
     }
 
@@ -127,7 +138,7 @@ document.getElementById("btnVerifyEmail").addEventListener("click", function () 
 
     localStorage.removeItem("unverified_email");
 
-    alert("✅ Email verified! You may now login.");
+    showToast("✅ Email verified! You may now login.");
     navigateTo("#/login");
 });
 
@@ -146,7 +157,7 @@ document.getElementById("btnLogin").addEventListener("click", function () {
     );
 
     if (!user) {
-        alert("❌ Invalid login or not verified.");
+        showToast("❌ Invalid login or not verified.");
         return;
     }
 
@@ -253,8 +264,6 @@ loadFromStorage();
 autoLogin();
 handleRouting();
 
-window.addEventListener("hashchange", handleRouting);
-
 //Profile 
 function renderProfile() {
 
@@ -264,8 +273,9 @@ function renderProfile() {
     }
 
     let nameEl = document.querySelector("#profilePage h2");
-    let emailEl = document.querySelector("#verifyUserEmail"); 
-    let roleEl = document.querySelector("#profilePage p:nth-of-type(3)");
+    let emailEl = document.getElementById("profileEmail");
+    emailEl.textContent = currentUser.email;
+    let roleEl = document.getElementById("profileRole");
 
     let firstName = currentUser.firstName;
     let lastName = currentUser.lastName;
@@ -394,6 +404,92 @@ function editAccount(index) {
     alert("Editing account: " + acc.email);
 }
 
+document.getElementById("btnSaveAccount").addEventListener("click", saveAccount);
+
+function saveAccount() {
+
+    let firstName = document.getElementById("Inp_AccFirstN").value.trim();
+    let lastName = document.getElementById("Inp_AccLastN").value.trim();
+    let email = document.getElementById("Inp_AccEmail").value.trim();
+    let password = document.getElementById("Inp_AccPass").value.trim();
+    let role = document.getElementById("Inp_AccRole").value;
+    let verified = document.getElementById("Inp_AccVerify").checked;
+
+
+    if (!firstName || !lastName || !email || !password) {
+        alert("All fields are required.");
+        return;
+    }
+
+    if (password.length < 6) {
+        alert("Password must be at least 6 characters.");
+        return;
+    }
+
+
+    if (editingAccountIndex === null) {
+
+
+        let existing = window.db.accounts.find(acc => acc.email === email);
+        if (existing) {
+            alert("Email already exists.");
+            return;
+        }
+
+        let newAccount = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            password: password,
+            role: role,
+            verified: verified
+        };
+
+        window.db.accounts.push(newAccount);
+
+        showToast("Account created successfully.");
+
+    } else {
+
+        let account = window.db.accounts[editingAccountIndex];
+
+
+        let duplicate = window.db.accounts.find((acc, i) =>
+            acc.email === email && i !== editingAccountIndex
+        );
+
+        if (duplicate) {
+            alert("Email already exists.");
+            return;
+        }
+
+        account.firstName = firstName;
+        account.lastName = lastName;
+        account.email = email;
+        account.password = password;
+        account.role = role;
+        account.verified = verified;
+
+        alert("✅ Account updated.");
+    }
+
+    saveToStorage();
+    clearAccountForm();
+    renderAccountsList();
+}
+
+function clearAccountForm() {
+
+    document.getElementById("Inp_AccFirstN").value = "";
+    document.getElementById("Inp_AccLastN").value = "";
+    document.getElementById("Inp_AccEmail").value = "";
+    document.getElementById("Inp_AccPass").value = "";
+    document.getElementById("Inp_AccRole").value = "user";
+    document.getElementById("Inp_AccVerify").checked = false;
+
+    editingAccountIndex = null;
+}
+
 //Department
 function renderDepartmentsList() {
 
@@ -460,7 +556,6 @@ document.querySelector(".btn-save-employee").addEventListener("click", function 
     let position = document.getElementById("Inp_EmpPos").value;
     let dept = document.getElementById("Inp_EmpDept").value;
 
-    // Check if email exists
     let userExists = window.db.accounts.find(acc => acc.email === email);
 
     if (!userExists) {
@@ -468,7 +563,6 @@ document.querySelector(".btn-save-employee").addEventListener("click", function 
         return;
     }
 
-    // Create employee object
     let newEmployee = {
         empId: empId,
         email: email,
@@ -484,5 +578,143 @@ document.querySelector(".btn-save-employee").addEventListener("click", function 
     alert("✅ Employee added!");
 });
 
+//Request
+function renderMyRequests() {
 
+    let tbody = document.getElementById("requestsTableBody");
+    tbody.innerHTML = "";
+
+    if (!currentUser) return;
+
+    let myRequests = window.db.requests.filter(req =>
+        req.employeeEmail === currentUser.email
+    );
+
+    if (myRequests.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center text-muted">
+                    No requests yet.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    myRequests.forEach(req => {
+
+        let itemsText = req.items
+            .map(item => `${item.name} (x${item.qty})`)
+            .join(", ");
+
+        tbody.innerHTML += `
+            <tr>
+                <td>${req.date}</td>
+                <td>${req.type}</td>
+                <td>${itemsText}</td>
+                <td>${req.status}</td>
+            </tr>
+        `;
+    });
+}
+function createItemRow(name = "", qty = "") {
+
+    let div = document.createElement("div");
+    div.classList.add("d-flex", "mb-2");
+
+    div.innerHTML = `
+        <input type="text" class="form-control me-2 item-name"
+            placeholder="Item Name" value="${name}">
+        <input type="number" class="form-control me-2 item-qty"
+            placeholder="Qty" style="width:80px" value="${qty}">
+        <button type="button" class="btn btn-danger btn-sm remove-item">
+            ×
+        </button>
+    `;
+
+    div.querySelector(".remove-item").addEventListener("click", function () {
+        div.remove();
+    });
+
+    return div;
+}
+
+document.getElementById("btnAddItem").addEventListener("click", function () {
+    let container = document.getElementById("itemsContainer");
+    container.appendChild(createItemRow());
+});
+
+document.getElementById("requestModal")
+.addEventListener("shown.bs.modal", function () {
+
+    let container = document.getElementById("itemsContainer");
+    container.innerHTML = "";
+    container.appendChild(createItemRow());
+});
+
+document.getElementById("btnSubmitRequest")
+.addEventListener("click", function () {
+
+    let type = document.getElementById("Inp_ReqType").value;
+
+    let itemNames = document.querySelectorAll(".item-name");
+    let itemQtys = document.querySelectorAll(".item-qty");
+
+    let items = [];
+
+    for (let i = 0; i < itemNames.length; i++) {
+
+        let name = itemNames[i].value.trim();
+        let qty = itemQtys[i].value;
+
+        if (name && qty > 0) {
+            items.push({
+                name: name,
+                qty: parseInt(qty)
+            });
+        }
+    }
+
+    if (items.length === 0) {
+        alert("You must add at least one valid item.");
+        return;
+    }
+
+    let newRequest = {
+        type: type,
+        items: items,
+        status: "Pending",
+        date: new Date().toLocaleDateString(),
+        employeeEmail: currentUser.email
+    };
+
+    window.db.requests.push(newRequest);
+    saveToStorage();
+
+    bootstrap.Modal.getInstance(
+        document.getElementById("requestModal")
+    ).hide();
+
+    renderMyRequests();
+    showToast("Request submitted successfully.");
+});
+
+// Toast 
+function showToast(message, type = "success") {
+    const toastEl = document.getElementById("appToast");
+    const toastBody = document.getElementById("toastMessage");
+
+    toastBody.textContent = message;
+
+    if (type === "error") {
+        toastEl.classList.remove("bg-success");
+        toastEl.classList.add("bg-danger", "text-white");
+    } else {
+        toastEl.classList.remove("bg-danger");
+        toastEl.classList.add("bg-success", "text-white");
+    }
+
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+}
 
